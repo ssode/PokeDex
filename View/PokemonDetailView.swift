@@ -21,6 +21,6 @@ struct PokemonDetailView: View {
 
 struct PokemonDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        PokemonDetailView(network: Network(details: Details.example))
+        PokemonDetailView(network: Network(details: Details.example, results: Results.example))
     }
 }

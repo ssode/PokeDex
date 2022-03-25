@@ -8,19 +8,21 @@
 import Foundation
 
 struct Results: Hashable, Decodable {
-   // var id = UUID()
     var results: [Result]
     
     static let example = Results(results: [
-        Result(name: "Bulbasuar", url: URL(string: "https://pokeapi.co/api/v2/pokemon/1/")!),
-        Result(name: "Ivysaur", url: URL(string: "https://pokeapi.co/api/v2/pokemon/2/")!)
+        Result(name: "Bulbasuar", url: "https://pokeapi.co/api/v2/pokemon/1/"),
+        Result(name: "Ivysaur", url: "https://pokeapi.co/api/v2/pokemon/2/")
     ])
 }
 
 struct Result: Hashable, Decodable {
-   // var id = UUID()
     let name: String
-    let url: URL
+    let url: String
     
-    static let example = Result(name: "Bulbasuar", url: URL(string: "https://pokeapi.co/api/v2/pokemon/1/")!)
+    enum CodingKeys: String, CodingKey {
+        case name, url
+    }
+    
+    static let example = Result(name: "Bulbasuar", url: "https://pokeapi.co/api/v2/pokemon/1/")
 }
