@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 class Network: ObservableObject {
     @Published var details: Details
@@ -34,7 +33,7 @@ class Network: ObservableObject {
                     DispatchQueue.main.async {
                         self.results = decodedResults
                     }
-                    await self.fetchDetails(result: self.results.results[0])
+                    await self.fetchDetails(result: self.results.results[1])
                     
                 }
             } catch {
@@ -45,7 +44,7 @@ class Network: ObservableObject {
     func fetchPokemon() {
         Task {
             await fetchResults()
-            await fetchDetails(result: self.results.results[0])
+            await fetchDetails(result: self.results.results[1])
         }
     }
     

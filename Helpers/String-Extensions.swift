@@ -74,7 +74,27 @@ extension String {
         }
         return text
     }
-//        guard self.hasSuffix(suffix) else { return self }
-//        return String(self.dropFirst(suffix.count))
-//    }
+    
+    func adjustStats(_ text: String) -> String {
+        if text == "attack" {
+            let newText = text.replacingOccurrences(of: "attack", with: "ATK  ")
+            return newText
+        } else if text == "defense" {
+            let newText = text.replacingOccurrences(of: "defense", with: "DEF  ")
+            return newText
+        } else if text == "speed" {
+            let newText = text.replacingOccurrences(of: "speed", with: "SPD  ")
+            return newText
+        } else if text == "special attack" {
+            let newText = text.replacingOccurrences(of: "special attack", with: "SATK")
+            return newText
+        } else if text == "special defense" {
+            let newText = text.replacingOccurrences(of: "special defense", with: "SDEF")
+            return newText
+        } else if text == "HP" {
+            let newText = text.replacingOccurrences(of: "HP", with: "HP   ")
+            return newText
+        }
+        return text
+    }
 }

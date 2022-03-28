@@ -6,7 +6,7 @@
 //
 //
 
-import Foundation
+import SwiftUI
 
 
 struct Details: Identifiable, Decodable, Hashable {
@@ -42,30 +42,31 @@ static let example = Details(
     baseExperience: 1,
     forms: [],
     height: 7,
-    id: 001,
+    id: 1,
     moves: [
         Move(move: MoveDetail(name: "Razor Wind", url: "https://pokeapi.co/api/v2/move/13/"), versionGroupDetails: [VersionGroupDetail(levelLearnedAt: 0)]),
         Move(move: MoveDetail(name: "Vine Whip", url: "https://pokeapi.co/api/v2/move/22/"), versionGroupDetails: [VersionGroupDetail(levelLearnedAt: 13)]),
         Move(move: MoveDetail(name: "Tackle", url: "https://pokeapi.co/api/v2/move/33/"), versionGroupDetails: [VersionGroupDetail(levelLearnedAt: 1)]),
 
     ],
-    name: "BBulbasaur",
+    name: "Bulbasaur",
     order: 1,
     species: Species(url: "https://pokeapi.co/api/v2/pokemon-species/1/"),
-    sprites: Sprites(frontDefault: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"),
+    sprites: Sprites(frontDefault: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png", other: Other(officialArtwork: OfficialArtwork(frontdefault: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"))),
     stats: [
-        Stat(baseStat: 45, stat: StatDetail(name: "HP=P")),
-        Stat(baseStat: 49, stat: StatDetail(name: "Attack")),
-        Stat(baseStat: 49, stat: StatDetail(name: "Defense")),
-        Stat(baseStat: 65, stat: StatDetail(name: "Special Attack")),
-        Stat(baseStat: 65, stat: StatDetail(name: "Special Defense")),
-        Stat(baseStat: 45, stat: StatDetail(name: "Speed")),
+        Stat(baseStat: 45, stat: StatDetail(name: "HP")),
+        Stat(baseStat: 49, stat: StatDetail(name: "attack")),
+        Stat(baseStat: 49, stat: StatDetail(name: "defense")),
+        Stat(baseStat: 65, stat: StatDetail(name: "special attack")),
+        Stat(baseStat: 65, stat: StatDetail(name: "special defense")),
+        Stat(baseStat: 45, stat: StatDetail(name: "speed")),
     ],
     types: [
         TypeElement(name: "grass"),
         TypeElement(name: "posion")
     ],
-    weight: 69)
+    weight: 69
+)
 
 }
 
@@ -89,6 +90,19 @@ struct Species: Hashable, Decodable {
 
 struct Sprites: Hashable, Decodable {
     var frontDefault: String
+    var other: Other
+}
+
+struct Other: Hashable, Decodable {
+    var officialArtwork: OfficialArtwork
+    
+    enum CodingKeys: String, CodingKey {
+        case officialArtwork = "official-artwork"
+    }
+}
+
+struct OfficialArtwork: Hashable, Decodable {
+    var frontdefault: String
 
 }
 

@@ -10,7 +10,7 @@ import Combine
 
 
 struct ContentView: View {
-    @ObservedObject var network: Network
+    @EnvironmentObject var network: Network
     
     @State private var searchText = ""
     
@@ -18,7 +18,7 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(searchResults) { pokemon in
-               //     NavigationLink(destination: PokemonDetailView(network: Network())) {
+                    NavigationLink(destination: PokemonDetailView()) {
                         HStack {
                             AsyncImage(url: URL(string: pokemon.sprites.frontDefault)) { image in
                                 image
@@ -30,7 +30,13 @@ struct ContentView: View {
                                 Color.gray.opacity(0.5)
                                     .frame(width: 100, height: 100)
                             }
-                            Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
+                            VStack(alignment: .leading) {
+                                Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
+                                Text("#" + String(format: "%03d",pokemon.id))
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                        }
                     }
                 }
             }
@@ -55,6 +61,6 @@ struct ContentView: View {
 }
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(network: Network(details: Details.example, results: Results.example))
+        ContentView()
     }
 }

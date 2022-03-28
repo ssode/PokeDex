@@ -13,7 +13,7 @@ struct PokeDexApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(network: network)
+            ContentView()
                 .environmentObject(network)
         }
     }
