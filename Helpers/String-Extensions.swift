@@ -85,14 +85,30 @@ extension String {
         } else if text == "speed" {
             let newText = text.replacingOccurrences(of: "speed", with: "SPD  ")
             return newText
-        } else if text == "special attack" {
-            let newText = text.replacingOccurrences(of: "special attack", with: "SATK")
+        } else if text == "special-attack" {
+            let newText = text.replacingOccurrences(of: "special-attack", with: "SATK")
             return newText
-        } else if text == "special defense" {
-            let newText = text.replacingOccurrences(of: "special defense", with: "SDEF")
+        } else if text == "special-defense" {
+            let newText = text.replacingOccurrences(of: "special-defense", with: "SDEF")
             return newText
-        } else if text == "HP" {
-            let newText = text.replacingOccurrences(of: "HP", with: "HP   ")
+        } else if text == "hp" {
+            let newText = text.replacingOccurrences(of: "hp", with: "HP   ")
+            return newText
+        }
+        return text
+    }
+    
+    func removeDash(_ text: String) -> String {
+        if text.contains("-") {
+            let newText = text.replacingOccurrences(of: "-", with: " ")
+            return newText
+        }
+        return text
+    }
+    
+    func removeN(_ text: String) -> String {
+        if text.contains("\n") {
+            let newText = text.replacingOccurrences(of: "\n", with: "")
             return newText
         }
         return text

@@ -17,31 +17,20 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(searchResults) { pokemon in
-                    NavigationLink(destination: PokemonDetailView()) {
+                ForEach(searchResults, id: \.self) { pokemon in
+                    NavigationLink(destination: PokemonDetailView(result: pokemon)) {
                         HStack {
-                            AsyncImage(url: URL(string: pokemon.sprites.frontDefault)) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-
-                            } placeholder: {
-                                Color.gray.opacity(0.5)
-                                    .frame(width: 100, height: 100)
-                            }
                             VStack(alignment: .leading) {
                                 Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
-                                Text("#" + String(format: "%03d",pokemon.id))
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
                             }
                         }
                     }
                 }
             }
+            .environment(\.defaultMinListRowHeight, 65)
             .listStyle(InsetListStyle())
             .navigationTitle("PokeDex")
+            
         }
         .onAppear {
             network.fetchPokemon()
@@ -50,11 +39,11 @@ struct ContentView: View {
         .disableAutocorrection(true)
             
     }
-    var searchResults: [Details] {
+    var searchResults: [Result] {
         if searchText.isEmpty {
-            return [network.details]
+            return network.results.results
         } else {
-            return [network.details].filter { $0.name.contains(searchText.lowercased()) }
+            return network.results.results.filter { $0.name.contains(searchText.lowercased()) }
         }
     }
     
