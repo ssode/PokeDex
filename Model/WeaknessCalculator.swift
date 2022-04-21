@@ -22,6 +22,9 @@ struct WeaknessCalculator {
         } else if defenseType == "electric" {
             let weaknesses = ["ground"]
             return weaknesses
+        } else if defenseType == "ice" {
+            let weaknesses = ["fire", "fighting", "rock", "steel"]
+            return weaknesses
         } else if defenseType == "grass" {
             let weaknesses = ["fire", "ice", "poison", "flying", "bug"]
             return weaknesses

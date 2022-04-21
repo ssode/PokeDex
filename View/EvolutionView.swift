@@ -12,18 +12,55 @@ struct EvolutionView: View {
     var speciesDetail: SpeciesDetail
     
     var body: some View {
-        VStack {
-            Text(network.evolution.chain.species.name)
+        HStack {
+            VStack {
+                AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 75, height: 75)
+                } placeholder: {
+                    Color.gray.opacity(0.5)
+                        .frame(width: 75, height: 75)
+                }
+                Text(network.evolution.chain.species.name.capitalizingFirstLetter())
+            }
+            Image(systemName: "arrow.right")
             ForEach(network.evolution.chain.evolvesTo, id: \.self) { pokemon in
-                Text(pokemon.species.name)
+                VStack {
+                    AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 75, height: 75)
+                    } placeholder: {
+                        Color.gray.opacity(0.5)
+                            .frame(width: 75, height: 75)
+                    }
+                    
+                    Text(pokemon.species.name.capitalizingFirstLetter())
+                }
                 ForEach(pokemon.evolvesTo, id: \.self) { evolution in
-                    Text(evolution.species.name)
+                    Image(systemName: "arrow.right")
+                    VStack {
+                        AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 75, height: 75)
+                        } placeholder: {
+                            Color.gray.opacity(0.5)
+                                .frame(width: 75, height: 75)
+                        }
+                        Text(evolution.species.name.capitalizingFirstLetter())
+                    }
                 }
             }
         }
         .onAppear {
             network.fetchEvolution(url: network.speciesDetail)
         }
+        .padding(.top)
     }
 }
 

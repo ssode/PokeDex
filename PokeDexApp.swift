@@ -9,7 +9,7 @@ import SwiftUI
 
 @main 
 struct PokeDexApp: App {
-    var network = Network(details: Details.example, results: Results.example, speciesDetail: SpeciesDetail.example, evolution: Evolution.example)
+    var network = Network(details: Details.example, results: Results.example, speciesDetail: SpeciesDetail.example, evolution: Evolution.example, locations: Locations.example)
     
     var body: some Scene {
         WindowGroup {

@@ -180,7 +180,7 @@ struct PokemonDetailView: View {
                         WeaknessView()
                         
                     } else if showingLocationView == true {
-                        // location view
+                        LocationView()
                     }
                 }
                 .offset(y: 60)
@@ -188,7 +188,8 @@ struct PokemonDetailView: View {
         }
         .background(colorType)
         .onAppear {
-            network.fetchDetails(url: result)
+           // network.fetchDetails(url: result)
+            network.GetPokemonDetails(result: result)
         }
     }
     

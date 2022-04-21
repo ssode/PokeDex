@@ -14,6 +14,7 @@ struct Details: Identifiable, Decodable, Hashable {
     let forms: [Species]
     let height: Int
     let id: Int
+    let locationAreaEncounters: String
     let moves: [Move]
     let name: String
     let order: Int
@@ -22,6 +23,10 @@ struct Details: Identifiable, Decodable, Hashable {
     let stats: [Stat]
     let types: [TypeElement]
     let weight: Int
+    
+    enum codingKeys: String, CodingKey {
+        case locationAreaEncounters = "location_area_encounters"
+    }
     
     static let example = Details(
         abilities: [
@@ -32,6 +37,7 @@ struct Details: Identifiable, Decodable, Hashable {
         forms: [],
         height: 7,
         id: 1,
+        locationAreaEncounters: "",
         moves: [],
         name: "Bulbasaur",
         order: 1,

@@ -16,16 +16,13 @@ struct DescriptionView: View {
             .multilineTextAlignment(.center)
             .font(.callout)
             .foregroundColor(.secondary)
-            .onAppear {
-                network.fetchSpecies(url: details.species)
-            }
             .padding(.bottom, 5)
     }
     
     var EntryText: String {
         let entries = network.speciesDetail.flavorTextEntries
         if entries.isEmpty == false {
-            let description = entries[3]
+            let description = entries[4]
             let flavorText = description.flavorText
         return flavorText
         }
