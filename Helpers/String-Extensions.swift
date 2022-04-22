@@ -113,4 +113,16 @@ extension String {
         }
         return text
     }
+    
+    func urlIndex(url: String) -> String {
+        var index = url.replacingOccurrences(of: "https://pokeapi.co/api/v2/pokemon/", with: "")
+        index.popLast()
+        return index
+    }
+    
+    func speciesURL(url: String) -> String {
+        var index = url.replacingOccurrences(of: "https://pokeapi.co/api/v2/pokemon-species/", with: "")
+        index.popLast()
+        return index
+    }
 }

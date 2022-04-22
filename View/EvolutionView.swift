@@ -12,51 +12,30 @@ struct EvolutionView: View {
     var speciesDetail: SpeciesDetail
     
     var body: some View {
-        HStack {
             VStack {
-                AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 75, height: 75)
-                } placeholder: {
-                    Color.gray.opacity(0.5)
-                        .frame(width: 75, height: 75)
-                }
-                Text(network.evolution.chain.species.name.capitalizingFirstLetter())
-            }
-            Image(systemName: "arrow.right")
-            ForEach(network.evolution.chain.evolvesTo, id: \.self) { pokemon in
                 VStack {
-                    AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 75, height: 75)
-                    } placeholder: {
-                        Color.gray.opacity(0.5)
-                            .frame(width: 75, height: 75)
-                    }
-                    
-                    Text(pokemon.species.name.capitalizingFirstLetter())
+                    Image("\(network.evolution.chain.species.url.speciesURL(url: network.evolution.chain.species.url))")
+                        .frame(width: 75, height: 75)
+                    Text(network.evolution.chain.species.name.capitalizingFirstLetter())
                 }
-                ForEach(pokemon.evolvesTo, id: \.self) { evolution in
-                    Image(systemName: "arrow.right")
+                Image(systemName: "arrow.down")
+                ForEach(network.evolution.chain.evolvesTo, id: \.self) { pokemon in
                     VStack {
-                        AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
+                        Image("\(pokemon.species.url.speciesURL(url: pokemon.species.url))")
+                            .frame(width: 75, height: 75)
+                        Text(pokemon.species.name.capitalizingFirstLetter())
+                    }
+                    ForEach(pokemon.evolvesTo, id: \.self) { evolution in
+                        Image(systemName: "arrow.down")
+                        VStack {
+                            Image("\(evolution.species.url.speciesURL(url: evolution.species.url))")
                                 .frame(width: 75, height: 75)
-                        } placeholder: {
-                            Color.gray.opacity(0.5)
-                                .frame(width: 75, height: 75)
+                            Text(evolution.species.name.capitalizingFirstLetter())
                         }
-                        Text(evolution.species.name.capitalizingFirstLetter())
                     }
                 }
             }
-        }
+    
         .onAppear {
             network.fetchEvolution(url: network.speciesDetail)
         }

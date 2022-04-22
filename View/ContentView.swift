@@ -6,12 +6,10 @@
 //
 
 import SwiftUI
-import Combine
 
 
 struct ContentView: View {
     @EnvironmentObject var network: Network
-    
     @State private var searchText = ""
     
     var body: some View {
@@ -20,9 +18,8 @@ struct ContentView: View {
                 ForEach(searchResults, id: \.self) { pokemon in
                     NavigationLink(destination: PokemonDetailView(result: pokemon)) {
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
-                            }
+                            Image("\(pokemon.url.urlIndex(url: pokemon.url))")
+                            Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
                         }
                     }
                 }
@@ -30,7 +27,6 @@ struct ContentView: View {
             .environment(\.defaultMinListRowHeight, 65)
             .listStyle(InsetListStyle())
             .navigationTitle("PokeDex")
-            
         }
         .onAppear {
             network.fetchPokemon()
@@ -45,8 +41,7 @@ struct ContentView: View {
         } else {
             return network.results.results.filter { $0.name.contains(searchText.lowercased()) }
         }
-    }
-    
+    }    
 }
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
