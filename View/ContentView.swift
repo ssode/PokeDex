@@ -7,39 +7,19 @@
 
 import SwiftUI
 
-
 struct ContentView: View {
     @EnvironmentObject var network: Network
     @State private var searchText = ""
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(searchResults, id: \.self) { pokemon in
-                    NavigationLink(destination: PokemonDetailView(result: pokemon)) {
-                        HStack {
-                            Image("\(pokemon.url.urlIndex(url: pokemon.url))")
-                            Text((pokemon.name.fixSuffix(pokemon.name).capitalizingFirstLetter()))
-                        }
-                    }
-                }
+            NavigationLink(destination: PokemonListView()) {
+                Text("PokeDex")
             }
-            .environment(\.defaultMinListRowHeight, 65)
-            .listStyle(InsetListStyle())
-            .navigationTitle("PokeDex")
+            .navigationTitle("PokePocket")
         }
         .onAppear {
             network.fetchPokemon()
-        }
-        .searchable(text: $searchText, prompt: "Search a Pokémon")
-        .disableAutocorrection(true)
-            
-    }
-    var searchResults: [Result] {
-        if searchText.isEmpty {
-            return network.results.results
-        } else {
-            return network.results.results.filter { $0.name.contains(searchText.lowercased()) }
         }
     }    
 }

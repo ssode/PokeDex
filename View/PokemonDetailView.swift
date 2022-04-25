@@ -9,13 +9,12 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     @EnvironmentObject var network: Network
+    @Namespace private var buttonAnimation
+    
     var result: Result
     
-    @State private var showingOverviewView = true
-    @State private var showingEvolutionView = false
-    @State private var showingMovesView = false
-    @State private var showingWeaknessView = false
-    @State private var showingLocationView = false
+    var menuButtons = ["Overview", "Evolution", "Moves", "Weaknesses", "Locations"]
+    @State private var selectedButton = 0
     
     var body: some View {
         ScrollView {
@@ -73,77 +72,30 @@ struct PokemonDetailView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            Button("Overview") {
-                                showingOverviewView = true
-                                showingEvolutionView = false
-                                showingMovesView = false
-                                showingWeaknessView = false
-                                showingLocationView = false
+                            ForEach(menuButtons.indices) { index in
+                                if index == selectedButton {
+                                    Text(menuButtons[index])
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 4)
+                                        .background(Capsule().foregroundColor(colorType))
+                                        .foregroundColor(.white)
+                                        .matchedGeometryEffect(id: "button", in: buttonAnimation)
+                                } else {
+                                    Text(menuButtons[index])
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 4)
+                                        .background(Capsule().foregroundColor(Color.clear))
+                                        .foregroundColor(colorType)
+                                        .onTapGesture {
+                                            selectedButton = index
+                                        }
+                                }
                             }
-                            .frame(width: 105, height: 40)
-                            .background(showingOverviewView ? colorType : Color.clear)
-                            .clipShape(Capsule())
-                            .foregroundColor(showingOverviewView ? .black : colorType)
-                            
-                            Spacer()
-                            
-                            Button("Evolution") {
-                                showingOverviewView = false
-                                showingEvolutionView = true
-                                showingMovesView = false
-                                showingWeaknessView = false
-                                showingLocationView = false
-                            }
-                            .frame(width: 105, height: 40)
-                            .background(showingEvolutionView ? colorType : Color.clear)
-                            .clipShape(Capsule())
-                            .foregroundColor(showingEvolutionView ? .black : colorType)
-                            
-                            Spacer()
-                            Button("Moves") {
-                                showingOverviewView = false
-                                showingEvolutionView = false
-                                showingMovesView = true
-                                showingWeaknessView = false
-                                showingLocationView = false
-                            }
-                            .frame(width: 105, height: 40)
-                            .background(showingMovesView ? colorType : Color.clear)
-                            .clipShape(Capsule())
-                            .foregroundColor(showingMovesView ? .black : colorType)
-                            
-                            
-                            Spacer()
-                            Button("Weaknesses") {
-                                showingOverviewView = false
-                                showingEvolutionView = false
-                                showingMovesView = false
-                                showingWeaknessView = true
-                                showingLocationView = false
-                            }
-                            .frame(width: 105, height: 40)
-                            .background(showingWeaknessView ? colorType : Color.clear)
-                            .clipShape(Capsule())
-                            .foregroundColor(showingWeaknessView ? .black : colorType)
-                            
-                            
-                            Spacer()
-                            Button("Locations") {
-                                showingOverviewView = false
-                                showingEvolutionView = false
-                                showingMovesView = false
-                                showingWeaknessView = false
-                                showingLocationView = true
-                            }
-                            .frame(width: 105, height: 40)
-                            .background(showingLocationView ? colorType : Color.clear)
-                            .clipShape(Capsule())
-                            .foregroundColor(showingLocationView ? .black : colorType)
+                            .frame(height: 40)
                         }
-                        .padding([.leading, .trailing], 40)
+                        .animation(.easeIn, value: selectedButton)
                     }
-                    
-                    if showingOverviewView == true {
+                    if selectedButton == 0 {
                         VStack(alignment: .leading) {
                             Text("ABILITIES:")
                                 .font(.caption)
@@ -169,17 +121,17 @@ struct PokemonDetailView: View {
                         }
                         StatBarView()
                             .padding(.bottom)
-                        
-                    } else if showingEvolutionView == true {
+
+                    } else if selectedButton == 1 {
                         EvolutionView(speciesDetail: network.speciesDetail)
                         
-                    } else if showingMovesView == true {
+                    } else if selectedButton == 2 {
                         MovesView()
                         
-                    } else if showingWeaknessView == true {
+                    } else if selectedButton == 3 {
                         WeaknessView()
                         
-                    } else if showingLocationView == true {
+                    } else if selectedButton == 4 {
                         LocationView()
                     }
                 }
@@ -188,7 +140,6 @@ struct PokemonDetailView: View {
         }
         .background(colorType)
         .onAppear {
-           // network.fetchDetails(url: result)
             network.GetPokemonDetails(result: result)
         }
     }
