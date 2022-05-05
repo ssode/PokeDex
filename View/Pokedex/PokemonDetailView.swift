@@ -10,6 +10,7 @@ import SwiftUI
 struct PokemonDetailView: View {
     @EnvironmentObject var network: Network
     @Namespace private var buttonAnimation
+    @Environment(\.colorScheme) var colorScheme
     
     var result: Result
     
@@ -21,7 +22,7 @@ struct PokemonDetailView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 35)
                     .frame(maxHeight: .infinity)
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? .black : .white)
                     .offset(y: 150)
                     .shadow(radius: 10)
                 
@@ -69,7 +70,7 @@ struct PokemonDetailView: View {
                         }
                     }
                     .padding(.bottom, 10)
-                    
+//
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(menuButtons.indices) { index in
@@ -124,13 +125,13 @@ struct PokemonDetailView: View {
 
                     } else if selectedButton == 1 {
                         EvolutionView(speciesDetail: network.speciesDetail)
-                        
+
                     } else if selectedButton == 2 {
                         MovesView()
-                        
+
                     } else if selectedButton == 3 {
                         WeaknessView()
-                        
+
                     } else if selectedButton == 4 {
                         LocationView()
                     }

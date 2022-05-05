@@ -28,12 +28,14 @@ struct PokemonListView: View {
         .searchable(text: $searchText, prompt: "Search a Pokémon")
         .disableAutocorrection(true)
         
+        
     }
     var searchResults: [Result] {
+        let allResults = network.results.results
         if searchText.isEmpty {
-            return network.results.results
+            return allResults
         } else {
-            return network.results.results.filter { $0.name.contains(searchText.lowercased()) }
+            return allResults.filter { $0.name.contains(searchText.lowercased()) }
         }
     }  
 }

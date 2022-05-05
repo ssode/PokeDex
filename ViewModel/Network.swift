@@ -22,8 +22,65 @@ class Network: ObservableObject {
         self.locations = [locations]
     }
     
-//    func fetchResults() {
-//        let url = URL(string: "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=121")!
+//    func fetchPokemon() {
+//        Task {
+//            await fetchResults()
+//        }
+//    }
+//
+//    func fetchResults() async {
+//            print("fetching list data")
+//            do {
+//                let url = URL(string: "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=386")!
+//                let (results, _) = try await URLSession.shared.data(from: url)
+//                let decoder = JSONDecoder()
+//                decoder.keyDecodingStrategy = .convertFromSnakeCase
+//
+//                if let decodedResults = try? decoder.decode(Results.self, from: results) {
+//                    DispatchQueue.main.async {
+//                        self.results = decodedResults
+//                    }
+//                    await self.fetchDetails(results: self.results.results)
+//                }
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+
+    func fetchresults2()  {
+        let url = URL(string: "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=386")!
+        let urlRequest = URLRequest(url: url)
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            if let error = error {
+                print("request error:", error)
+                return
+            }
+            guard let response = response as? HTTPURLResponse else { return }
+
+            if response.statusCode == 200 {
+                guard let data = data else { return }
+                DispatchQueue.main.async {
+                    do {
+//                        print("Results:")
+//                        print(String(decoding: data, as: UTF8.self))
+//                        print("end results")
+                        let decoder = JSONDecoder()
+                        decoder.keyDecodingStrategy = .convertFromSnakeCase
+                        let decodedResults = try decoder.decode(Results.self, from: data)
+                        self.results = decodedResults
+                    } catch let error {
+                        print("error decoding:", error)
+                    }
+                }
+            }
+        }
+         dataTask.resume()
+    }
+
+
+//    func fetchDetails(results: [Result]) async {
+//        for urls in results {
+//            guard let url = URL(string: urls.url) else { fatalError("Missing URL") }
 //        let urlRequest = URLRequest(url: url)
 //        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
 //            if let error = error {
@@ -38,8 +95,8 @@ class Network: ObservableObject {
 //                    do {
 //                        let decoder = JSONDecoder()
 //                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-//                        let decodedResults = try decoder.decode(Results.self, from: data)
-//                        self.results = decodedResults
+//                        let decodedDetails = try decoder.decode(Details.self, from: data)
+//                        self.details = decodedDetails
 //                    } catch let error {
 //                        print("error decoding:", error)
 //                    }
@@ -47,64 +104,8 @@ class Network: ObservableObject {
 //            }
 //        }
 //         dataTask.resume()
+//        }
 //    }
-    
-    
-    func fetchPokemon() {
-        Task {
-            await fetchResults()
-        }
-    }
-    
-    func fetchResults() async {
-            print("fetching list data")
-            do {
-                let url = URL(string: "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=386")!
-                let (results, _) = try await URLSession.shared.data(from: url)
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-                if let decodedResults = try? decoder.decode(Results.self, from: results) {
-                    DispatchQueue.main.async {
-                        self.results = decodedResults
-                    }
-                    await self.fetchDetails(results: self.results.results)
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-
-
-
-    func fetchDetails(results: [Result]) async {
-        for urls in results {
-            guard let url = URL(string: urls.url) else { fatalError("Missing URL") }
-        let urlRequest = URLRequest(url: url)
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                print("request error:", error)
-                return
-            }
-            guard let response = response as? HTTPURLResponse else { return }
-
-            if response.statusCode == 200 {
-                guard let data = data else { return }
-                DispatchQueue.main.async {
-                    do {
-                        let decoder = JSONDecoder()
-                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-                        let decodedDetails = try decoder.decode(Details.self, from: data)
-                        self.details = decodedDetails
-                    } catch let error {
-                        print("error decoding:", error)
-                    }
-                }
-            }
-        }
-         dataTask.resume()
-        }
-    }
     
     func fetchDetails(url: Result) {
         guard let url = URL(string: url.url) else { fatalError("Missing URL") }
@@ -132,38 +133,6 @@ class Network: ObservableObject {
         }
          dataTask.resume()
     }
-    
-    func fetchSpecies(url: Species) {
-        guard let url = URL(string: url.url) else { fatalError("Missing URL") }
-        let urlRequest = URLRequest(url: url)
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                print("request error:", error)
-                return
-            }
-            guard let response = response as? HTTPURLResponse else { return }
-
-            if response.statusCode == 200 {
-                guard let data = data else { return }
-                DispatchQueue.main.async {
-                    do {
-                        print("Results:")
-                        print(String(decoding: data, as: UTF8.self))
-                        print("end results")
-                        let decoder = JSONDecoder()
-                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-                        let decodedSpeciesDetail = try decoder.decode(SpeciesDetail.self, from: data)
-                        self.speciesDetail = decodedSpeciesDetail
-                        
-                    } catch let error {
-                        print("error decoding:", error)
-                    }
-                }
-            }
-        }
-         dataTask.resume()
-    }
-    
     
     func fetchEvolution(url: SpeciesDetail)  {
         guard let url = URL(string: url.evolutionChain.url) else { fatalError("Missing URL") }
@@ -296,41 +265,12 @@ class Network: ObservableObject {
          dataTask.resume()
     }
     
-    func fetchLocations2(details: Details)  {
-        guard let url = URL(string: details.locationAreaEncounters) else { fatalError("Missing URL") }
-        let urlRequest = URLRequest(url: url)
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                print("request error:", error)
-                return
-            }
-            guard let response = response as? HTTPURLResponse else { return }
-
-            if response.statusCode == 200 {
-                guard let data = data else { return }
-                DispatchQueue.main.async {
-                    do {
-//                        print("Results:")
-//                        print(String(decoding: data, as: UTF8.self))
-//                        print("end results")
-                        let decoder = JSONDecoder()
-                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-                        let decodedLocations = try decoder.decode([Locations].self, from: data)
-                        self.locations = decodedLocations
-                    } catch let error {
-                        print("error decoding:", error)
-                    }
-                }
-            }
-        }
-         dataTask.resume()
-    }
+   
     
     func GetPokemonDetails(result: Result) {
         Task {
             await fetchDetails2(result: result)
             await fetchSpecies2(species: self.details.species)
-       //     await fetchEvolutionChain(species: self.details.species)
             await fetchLocations(details: self.details)
         }
     }

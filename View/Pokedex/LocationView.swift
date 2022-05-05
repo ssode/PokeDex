@@ -29,9 +29,7 @@ struct LocationView: View {
             }
         }
         .padding()
-        .onAppear {
-            network.fetchLocations2(details: network.details)
-        }
+        
     }
 }
 
