@@ -16,15 +16,14 @@ struct WhosThatPokemonView: View {
     @State private var score: Float = 0
     @State private var total: Float = 0
     @State private var round: Float = 1
+    @State private var timeRemaining = 15
     @State private var pokeChoices: [Result] = []
-    @State private var answerTapped = false
-    @State private var choiceTapped = false
     @State private var selectedAnswer: [String] = []
     @State private var correctAnswer: [String] = []
-    @State private var timeRemaining = 15
+    @State private var choiceTapped = false
     @State private var isActive = true
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var rows = [GridItem(.flexible(minimum: 10, maximum: 75)),GridItem(.flexible(minimum: 10, maximum: 75))]
 
     
@@ -32,7 +31,7 @@ struct WhosThatPokemonView: View {
         ZStack {
             Image("blueSpiral")
                 .ignoresSafeArea()
-            if pokeAnswer == "" && total == 0 {
+            if pokeAnswer == "" {
                 VStack {
                     VStack(alignment: .center) {
                         Text("How to play:")
@@ -112,34 +111,36 @@ struct WhosThatPokemonView: View {
                     .padding(.bottom, 75)
                     
                     ZStack {
-                        AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
+                        if choiceTapped == false && timeRemaining > 0 {
+                            Rectangle()
                                 .frame(width: 250, height: 250)
-                            
-                        } placeholder: {
-                            Color.gray.opacity(0.5)
-                                .frame(width: 250, height: 250)
-                        }
-                        Rectangle()
-                            .frame(width: 250, height: 250)
-                            .foregroundColor(.black)
-                            .opacity(choiceTapped ? 0.0 : 1.0)
-                            .mask {
-                                AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 250, height: 250)
-                                    
-                                } placeholder: {
-                                    Color.gray.opacity(0.0)
-                                        .frame(width: 1, height: 1)
+                                .foregroundColor(.black)
+                                .opacity(1.0)
+                                .mask {
+                                    AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 250, height: 250)
+                                        
+                                    } placeholder: {
+                                        Color.gray.opacity(0.0)
+                                            .frame(width: 250, height: 250)
+                                    }
                                 }
+                        } else if choiceTapped == true || timeRemaining == 0 {
+                            AsyncImage(url: URL(string: network.details.sprites.other.officialArtwork.frontDefault)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 250, height: 250)
+                                
+                            } placeholder: {
+                                Color.gray.opacity(0.0)
+                                    .frame(width: 250, height: 250)
                             }
+                        }
                     }
-                    
                     LazyHGrid(rows: rows, alignment: .center, spacing: 75) {
                         ForEach(pokeChoices, id: \.self) { choice in
                             Button(action: {
@@ -153,7 +154,7 @@ struct WhosThatPokemonView: View {
                                             Text(choice.name.fixSuffix(choice.name).capitalizingFirstLetter())
                                         )
                                         .foregroundColor(choiceTapped ? .white : .black)
-                                } else if choice.name != pokeAnswer || timeRemaining == 0 {
+                                } else if choice.name != pokeAnswer {
                                     Capsule()
                                         .frame(width: 150, height: 50)
                                         .foregroundColor(choiceTapped ? .fire : .white)
@@ -165,12 +166,10 @@ struct WhosThatPokemonView: View {
                             })
                         }
                     }
-                   
                     Button(action: {
                         round += 1
-                        timeRemaining = 15
                         choiceTapped = false
-                        answerTapped = false
+                        timeRemaining = 15
                         randomPokemonGame()
                         
                     }, label: {
@@ -188,12 +187,9 @@ struct WhosThatPokemonView: View {
                 }
                 .onReceive(timer) { time in
                     guard isActive else { return }
-                    if timeRemaining > 0 && choiceTapped == false {
+                    if timeRemaining >= 0 && choiceTapped == false {
                         timeRemaining -= 1
-                    } else {
-                        total += 1
-                        choiceTapped = true
-                        selectedAnswer.append("Timed out")
+                        timedOut()
                     }
                 }
                 .onChange(of: scenePhase) { newPhase in
@@ -203,7 +199,6 @@ struct WhosThatPokemonView: View {
                         isActive = false
                     }
                 }
-    
             } else if round == 11 {
                 VStack {
                     HStack {
@@ -221,7 +216,6 @@ struct WhosThatPokemonView: View {
                         Capsule()
                             .foregroundColor(.electric)
                     )
-                    
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
                             .frame(width: 250, height: 300)
@@ -239,18 +233,15 @@ struct WhosThatPokemonView: View {
                             }
                         }
                         .foregroundColor(.white)
-                        
                     }
                     Button(action: {
                         round = 1
                         score = 0
                         total = 0
-                        answerTapped = false
                         choiceTapped = false
                         correctAnswer = []
                         selectedAnswer = []
                         randomPokemonGame()
-                        
                     }, label: {
                         Capsule()
                             .frame(width: 150, height: 50)
@@ -260,10 +251,8 @@ struct WhosThatPokemonView: View {
                                     .fontWeight(.bold)
                             )
                             .foregroundColor(.white)
-                            
                     })
                 }
-                
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -301,8 +290,7 @@ struct WhosThatPokemonView: View {
         if total < round {
             if choice.name == pokeAnswer {
                 correctAnswer.append(pokeAnswer)
-                selectedAnswer.append(pokeAnswer)
-                answerTapped = true
+                selectedAnswer.append(choice.name)
                 choiceTapped = true
                 total += 1
                 score += 1
@@ -310,7 +298,6 @@ struct WhosThatPokemonView: View {
             } else {
                 correctAnswer.append(pokeAnswer)
                 selectedAnswer.append(choice.name)
-                answerTapped = false
                 choiceTapped = true
                 total += 1
             }
@@ -340,6 +327,14 @@ struct WhosThatPokemonView: View {
         } else {
             return .fire
         }
+    }
+    
+   func timedOut() {
+       if timeRemaining == 0 {
+        total += 1
+        choiceTapped = true
+        selectedAnswer.append("Timed out")
+       }
     }
 }
 
