@@ -12,6 +12,8 @@ struct PokemonDetailView: View {
     @Namespace private var buttonAnimation
     @Environment(\.colorScheme) var colorScheme
     
+    
+    
     var result: Result
     
     var menuButtons = ["Overview", "Evolution", "Moves", "Weaknesses", "Locations"]

@@ -109,7 +109,7 @@ struct WhosThatPokemonView: View {
                     )
                     .padding(.top, 25)
                     .padding(.bottom, 75)
-                    
+
                     ZStack {
                         if choiceTapped == false && timeRemaining > 0 {
                             Rectangle()
@@ -122,7 +122,7 @@ struct WhosThatPokemonView: View {
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 250, height: 250)
-                                        
+
                                     } placeholder: {
                                         Color.gray.opacity(0.0)
                                             .frame(width: 250, height: 250)
@@ -134,7 +134,7 @@ struct WhosThatPokemonView: View {
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 250, height: 250)
-                                
+
                             } placeholder: {
                                 Color.gray.opacity(0.0)
                                     .frame(width: 250, height: 250)
@@ -267,21 +267,24 @@ struct WhosThatPokemonView: View {
                 })
             }
         }
+        
     }
     
     func randomPokemonGame() {
         let allPokemon = network.results.results
         let answer = allPokemon.randomElement()
-        let allchoices = allPokemon.filter { $0 != answer }
+        var allchoices = allPokemon.filter { $0 != answer }
         var choices: [Result] = []
         while choices.count < 3 {
             let randomPokemon = allchoices.randomElement()
-            allchoices.filter { $0 != randomPokemon }
+            if let usedIndex = allchoices.firstIndex(where: { $0 == randomPokemon }) {
+                allchoices.remove(at: usedIndex)
+            }
             choices.append(randomPokemon!)
         }
         choices.append(answer!)
         choices.shuffle()
-        network.fetchDetails(url: answer!)
+        network.fetchQuizDetails(url: answer!)
         pokeAnswer = answer!.name
         pokeChoices = choices
     }

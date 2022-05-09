@@ -11,6 +11,7 @@ struct PokemonListView: View {
     @EnvironmentObject var network: Network
     @State private var searchText = ""
     
+    
     var body: some View {
         List {
             ForEach(searchResults, id: \.self) { pokemon in
